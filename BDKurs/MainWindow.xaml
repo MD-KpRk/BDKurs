@@ -1,0 +1,158 @@
+﻿<Window x:Class="BDKurs.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BDKurs"
+        mc:Ignorable="d"
+        Title="Library Management" Height="450" Width="800" FontFamily="Yu Gothic UI" WindowStartupLocation="CenterScreen" MinWidth="800" MinHeight="450" Closing="Window_Closing">
+
+    
+    <Grid Background="#FFEFEFEF">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Menu Height="25">
+            <MenuItem Header="База данных" FontFamily="Yu Gothic UI" FontSize="14">
+                <MenuItem Header="Авторы" Click="MenuItem_Click_Authors" />
+                <MenuItem Header="Книги" Click="MenuItem_Click_Books" />
+                <MenuItem Header="Издательства" Click="MenuItem_Click_Publishers" />
+                <MenuItem Header="Жанры" Click="MenuItem_Click_Genres" />
+                <MenuItem Header="Читатели" Click="MenuItem_Click_Readers" />
+                <MenuItem Header="Сотрудники" Click="MenuItem_Click_Employees" />
+                <MenuItem Header="Должности" Click="MenuItem_Click_Positions" />
+                <MenuItem Header="Категории доступа" Click="MenuItem_Click_AccessCat" />
+                <MenuItem Header="Категории читателей" Click="MenuItem_Click_ReaderCat" />
+                <MenuItem Header="Ордера" Click="MenuItem_Click_BookOrders" />
+                <MenuItem Header="Статусы книг" Click="MenuItem_Click_BooksStatuses" />
+            </MenuItem>
+            <MenuItem Header="Дополнительно" FontFamily="Yu Gothic UI" FontSize="14">
+                <MenuItem Header="1" FontFamily="Yu Gothic UI" FontSize="14" />
+            </MenuItem>
+            <MenuItem Header="Help" FontFamily="Yu Gothic UI" FontSize="14"/>
+            <MenuItem Header="Other" FontFamily="Yu Gothic UI" FontSize="14">
+                <MenuItem Header="Reports" FontFamily="Yu Gothic UI" FontSize="14">
+                    <MenuItem Header="Author Report" FontFamily="Yu Gothic UI" FontSize="14"  />
+                    <MenuItem Header="Book Report" FontFamily="Yu Gothic UI" FontSize="14"  />
+                    <MenuItem Header="Publisher Report" FontFamily="Yu Gothic UI" FontSize="14" />
+                    <MenuItem Header="Reader Report" FontFamily="Yu Gothic UI" FontSize="14" />
+                    <MenuItem Header="Employee Report" FontFamily="Yu Gothic UI" FontSize="14" />
+                </MenuItem>
+                <MenuItem Header="Print Orders" FontFamily="Yu Gothic UI" FontSize="14" />
+            </MenuItem>
+        </Menu>
+
+        <Grid Background="White" MinHeight="400" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="20"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="520*"/>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="245"/>
+                <ColumnDefinition Width="10"/>
+            </Grid.ColumnDefinitions>
+
+            <DataGrid x:Name="dg1" Grid.Column="1" Grid.Row="1" FontSize="14" IsReadOnly="True" AutoGeneratingColumn="DataGrid_AutoGeneratingColumn"/>
+            <Grid Grid.Column="3" Grid.Row="1" Background="#FF273038">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="43"/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="10"/>
+                </Grid.ColumnDefinitions>
+                <Label x:Name="MainLabel" Content="Employees" Grid.Column="1" FontSize="24" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="{x:Null}" Foreground="White"/>
+                <Separator Grid.Column="1" Grid.Row="1" />
+
+                <Grid Grid.Row="3" Grid.ColumnSpan="3">
+                    <!-- Button Storage -->
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid x:Name="ReloadButton" Background="#FF273038" MouseEnter="Button1_MouseEnter" MouseLeave="Button1_MouseLeave" VerticalAlignment="Top" MouseDown="Button1_MouseDown" MouseUp="ReloadButton_MouseUp" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="11"/>
+                            <ColumnDefinition Width="36*"/>
+                            <ColumnDefinition Width="187*"/>
+                            <ColumnDefinition Width="10"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>
+                            <RowDefinition Height="9"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="15"/>
+                        </Grid.RowDefinitions>
+                        <Label Content="Reload Data" Grid.Column="2" Grid.Row="1" Foreground="White" FontSize="16" VerticalAlignment="Top" Grid.RowSpan="3" />
+                        <Image Grid.Column="1" Grid.Row="2" Source="png2.png" Height="16" VerticalAlignment="Top" />
+                    </Grid>
+
+                    <Grid x:Name="AddButton" Background="#FF273038" MouseEnter="Button1_MouseEnter" MouseLeave="Button1_MouseLeave" VerticalAlignment="Top" MouseDown="Button1_MouseDown" MouseUp="AddButton_MouseUp" Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="11"/>
+                            <ColumnDefinition Width="36*"/>
+                            <ColumnDefinition Width="187*"/>
+                            <ColumnDefinition Width="10"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>
+                            <RowDefinition Height="9"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="15"/>
+                        </Grid.RowDefinitions>
+                        <Label Content="Add" Grid.Column="2" Grid.Row="1" Foreground="White" FontSize="16" VerticalAlignment="Top" Grid.RowSpan="3" />
+                        <Image Grid.Column="1" Grid.Row="2" Source="png1.png" Height="16" VerticalAlignment="Top" />
+                    </Grid>
+
+                    <Grid x:Name="RemoveButton" Background="#FF273038" MouseEnter="Button1_MouseEnter" MouseLeave="Button1_MouseLeave" VerticalAlignment="Top" MouseDown="Button1_MouseDown" MouseUp="RemoveButton_MouseUp" Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="11"/>
+                            <ColumnDefinition Width="36*"/>
+                            <ColumnDefinition Width="187*"/>
+                            <ColumnDefinition Width="10"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>
+                            <RowDefinition Height="9"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="15"/>
+                        </Grid.RowDefinitions>
+                        <Label Content="Remove" Grid.Column="2" Grid.Row="1" Foreground="White" FontSize="16" VerticalAlignment="Top" Grid.RowSpan="3" />
+                        <Image Grid.Column="1" Grid.Row="2" Source="png3.png" Height="16" VerticalAlignment="Top" />
+                    </Grid>
+
+                    <Grid x:Name="EditButton" Background="#FF273038" MouseEnter="Button1_MouseEnter" MouseLeave="Button1_MouseLeave" VerticalAlignment="Top" MouseDown="Button1_MouseDown" MouseUp="EditButton_MouseUp" Grid.Row="3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="11"/>
+                            <ColumnDefinition Width="36*"/>
+                            <ColumnDefinition Width="187*"/>
+                            <ColumnDefinition Width="10"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>
+                            <RowDefinition Height="9"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="15"/>
+                        </Grid.RowDefinitions>
+                        <Label Content="Edit" Grid.Column="2" Grid.Row="1" Foreground="White" FontSize="16" VerticalAlignment="Top" Grid.RowSpan="3" />
+                        <Image Grid.Column="1" Grid.Row="2" Source="png4.png" Height="16" VerticalAlignment="Top" />
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+    
+</Window>
