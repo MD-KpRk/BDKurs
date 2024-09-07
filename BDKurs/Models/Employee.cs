@@ -1,10 +1,12 @@
 ﻿using BDKurs;
+using BDKurs.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-public class Employee
+public class Employee : BDObject
 {
     [Key]
+    [NonEditable]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int EmployeeID { get; set; }
 

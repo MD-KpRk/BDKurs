@@ -1,10 +1,12 @@
 ﻿using BDKurs;
+using BDKurs.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-public class Gender
+public class Gender : BDObject
 {
     [Key]
+    [NonEditable]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int GenderID { get; set; }
 

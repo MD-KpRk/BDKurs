@@ -1,10 +1,12 @@
 ﻿using BDKurs;
+using BDKurs.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-public class Position
+public class Position : BDObject
 {
     [ColumnName("Номер")]
+    [NonEditable]
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int PositionID { get; set; }

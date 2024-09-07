@@ -1,8 +1,9 @@
 ﻿using BDKurs;
+using BDKurs.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-public class Book
+public class Book : BDObject
 {
 
     [ColumnName("ISBN")]

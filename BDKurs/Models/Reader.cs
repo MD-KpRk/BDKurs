@@ -1,11 +1,13 @@
 ﻿using BDKurs;
+using BDKurs.Models;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-public class Reader
+public class Reader : BDObject
 {
     [ColumnName("Номер")]
+    [NonEditable]
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int ReaderID { get; set; }

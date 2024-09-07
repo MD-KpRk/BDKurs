@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using BDKurs.Models;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.ComponentModel;
@@ -18,7 +19,7 @@ namespace BDKurs
 {
     public enum Tables
     {
-        AcessCategory = 1,
+        AccessCategory = 1,
         Author,
         Book,
         BookOrder,
@@ -32,9 +33,6 @@ namespace BDKurs
         Status
     }
 
-
-
-
     [AttributeUsage(AttributeTargets.Property)]
     public class ColumnNameAttribute : Attribute
     {
@@ -44,6 +42,9 @@ namespace BDKurs
 
     [AttributeUsage(AttributeTargets.Property)]
     public class HiddenAttribute : Attribute { }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public class NonEditable : Attribute { }
 
     public partial class MainWindow : Window
     {
@@ -61,7 +62,7 @@ namespace BDKurs
             {
                 switch(value)
                 {
-                    case Tables.AcessCategory:
+                    case Tables.AccessCategory:
                         currentchoose = value;
                         LoadData("Категории доступа", () => _context.AccessCategories.AsQueryable());
                         break;
@@ -130,6 +131,9 @@ namespace BDKurs
                         LoadData("Статусы книг", () => _context.Statuses.AsQueryable());
                         break;
 
+                    default:
+                        MessageBox.Show("Таблица не найдена");
+                        break;
                 }
 
 
@@ -187,7 +191,7 @@ namespace BDKurs
                 throw new InvalidOperationException("LibraryDbContext не был зарегистрирован.");
 
 
-            MenuItem_Click_Authors(new object(), new RoutedEventArgs());
+            CurrentChoose = Tables.Author;
         }
 
 
@@ -223,7 +227,7 @@ namespace BDKurs
             => CurrentChoose = Tables.BookOrder;
 
         private void MenuItem_Click_AccessCat(object sender, RoutedEventArgs e)
-            => CurrentChoose = Tables.AcessCategory;
+            => CurrentChoose = Tables.AccessCategory;
 
         private void MenuItem_Click_ReaderCat(object sender, RoutedEventArgs e)
             => CurrentChoose = Tables.ReaderCategory;
@@ -252,15 +256,18 @@ namespace BDKurs
 
         private void AddButton_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            // Логика добавления новой записи
-            MessageBox.Show("Добавить запись");
+
+            ModelWindow modelBuilder = new ModelWindow(Enum.GetName(CurrentChoose));
+            modelBuilder.Show();
+
         }
 
         private void ReloadButton_MouseUp(object sender, MouseButtonEventArgs e)
         {
             // Логика обновления данных
-            MessageBox.Show("Данные перегружены");
-            // Пример повторной загрузки данных сотрудников
+            CurrentChoose = currentchoose;
+            MessageBox.Show("Данные обновлены");
+
         }
 
         private void RemoveButton_MouseUp(object sender, MouseButtonEventArgs e)

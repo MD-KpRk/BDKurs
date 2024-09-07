@@ -1,10 +1,12 @@
 ﻿using BDKurs;
+using BDKurs.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-public class Publisher
+public class Publisher : BDObject
 {
     [ColumnName("Номер")]
+    [NonEditable]
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int PublisherID { get; set; }
