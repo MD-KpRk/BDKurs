@@ -33,18 +33,6 @@ namespace BDKurs
         Status
     }
 
-    [AttributeUsage(AttributeTargets.Property)]
-    public class ColumnNameAttribute : Attribute
-    {
-        public string Name { get; set; }
-        public ColumnNameAttribute(string Name) { this.Name = Name; }
-    }
-
-    [AttributeUsage(AttributeTargets.Property)]
-    public class HiddenAttribute : Attribute { }
-
-    [AttributeUsage(AttributeTargets.Property)]
-    public class NonEditable : Attribute { }
 
     public partial class MainWindow : Window
     {
@@ -257,8 +245,8 @@ namespace BDKurs
         private void AddButton_MouseUp(object sender, MouseButtonEventArgs e)
         {
 
-            ModelWindow modelBuilder = new ModelWindow(Enum.GetName(CurrentChoose));
-            modelBuilder.Show();
+            ModelWindow modelBuilder = new ModelWindow(Enum.GetName(CurrentChoose), _context);
+            modelBuilder.ShowDialog();
 
         }
 

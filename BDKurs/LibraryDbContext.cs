@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Windows.Forms;
 
 public class LibraryDbContext : DbContext
 {
@@ -24,5 +25,27 @@ public class LibraryDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         // Здесь можно настроить дополнительные конфигурации, если необходимо
+    }
+
+    public static IQueryable GetDbSetByName(string entityName, LibraryDbContext _context)
+    {
+        // Получаем тип контекста
+        Type contextType = _context.GetType();
+
+
+        // Ищем свойство по имени entityName
+        System.Reflection.PropertyInfo? property = contextType.GetProperty(entityName);
+        MessageBox.Show("prop: " + property.Name);
+
+        if (property == null)
+        {
+            throw new ArgumentException($"DbSet with name {entityName} not found.");
+        }
+
+        // Получаем значение DbSet из контекста
+        var dbSet = property.GetValue(_context);
+
+        // Возвращаем DbSet как IQueryable для дальнейшего использования
+        return dbSet as IQueryable;
     }
 }

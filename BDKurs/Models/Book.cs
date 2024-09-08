@@ -8,6 +8,7 @@ public class Book : BDObject
 
     [ColumnName("ISBN")]
     [Key]
+    [Required]
     [MaxLength(15)]
     public string ISBN { get; set; } = "";
 
@@ -17,7 +18,7 @@ public class Book : BDObject
     public string Title { get; set; } = "";
 
     [ColumnName("Год публикации")]
-    public int? PublicationYear { get; set; }
+    public int? PublicationYear { get; set; } // NULLABLE
 
     [Hidden]
     [ForeignKey("PublisherID")]

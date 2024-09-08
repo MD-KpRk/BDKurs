@@ -16,17 +16,18 @@ using System.Windows.Shapes;
 namespace BDKurs.ModelControls
 {
     /// <summary>
-    /// Логика взаимодействия для StringTextBoxUserControl.xaml
+    /// Логика взаимодействия для DatePickerUserControl.xaml
     /// </summary>
-    public partial class StringTextBoxUserControl : UserControl
+    public partial class DatePickerUserControl : UserControl
     {
-        public StringTextBoxUserControl(string labelname)
+        public DatePickerUserControl(Params par)
         {
             InitializeComponent();
-            lb.Content = labelname;
+            if (par.Req)
+                lb.Content = par.ColumnName + "*";
+            else
+                lb.Content = par.ColumnName;
 
         }
-
-
     }
 }
