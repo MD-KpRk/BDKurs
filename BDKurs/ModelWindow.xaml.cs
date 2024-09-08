@@ -1,8 +1,10 @@
 ﻿using BDKurs.ModelControls;
 using BDKurs.Models;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -38,6 +40,13 @@ namespace BDKurs
 
     public partial class ModelWindow : Window
     {
+        List<TextBoxUserControl> tblist = new List<TextBoxUserControl>();
+        List<DatePickerUserControl> dplist = new List<DatePickerUserControl>();
+        List<ComboBoxUserControl> cblist = new List<ComboBoxUserControl>();
+
+        LibraryDbContext _context;
+        public Type ModelType;
+
         public List<Params> GetPropertyDetails(Type type)
         {
             var result = new List<Params>();
@@ -66,28 +75,103 @@ namespace BDKurs
         }
 
 
-        public ModelWindow(string typeName, LibraryDbContext _context)
+        public ModelWindow(string typeName, LibraryDbContext context)
         {
-            List<Params> paramslist = GetPropertyDetails(Type.GetType(typeName));
+            _context = context;
+            ModelType = Type.GetType(typeName);
+            List<Params> paramslist = GetPropertyDetails(ModelType);
             InitializeComponent();
 
             foreach (Params abc in paramslist)
             {
                 //
                 if (abc.PropertyType == typeof(string) || abc.PropertyType == typeof(int) || abc.PropertyType == typeof(int?))
-                    stack.Children.Add(new TextBoxUserControl(abc));
-                else if (abc.PropertyType == typeof(DateTime))
-                    stack.Children.Add(new DatePickerUserControl(abc));
-                else stack.Children.Add(new ComboBoxUserControl(abc, _context));
+                {
+                    TextBoxUserControl newtb = new TextBoxUserControl(abc);
+                    tblist.Add(newtb);
+                    stack.Children.Add(newtb);
+                }
+                else if (abc.PropertyType == typeof(DateTime) || abc.PropertyType == typeof(DateTime?))
+                {
+                    DatePickerUserControl newdp = new DatePickerUserControl(abc);
+                    dplist.Add(newdp);
+                    stack.Children.Add(newdp);
+                }
+                else
+                {
+                    ComboBoxUserControl newcb = new ComboBoxUserControl(abc,_context);
+                    cblist.Add(newcb);
+
+                    stack.Children.Add(newcb);
+                }
                 //else MessageBox.Show("Ошибка процедурной генерации окна " + abc.PropertyType);
             }
 
         }
 
+        public string ValidateData()
+        {
+            foreach(var a in tblist)
+            {
+                if (a.par.Req && string.IsNullOrEmpty(a.tb.Text))
+                    return "Не заполнены все обязательные поля";
+            }
+            foreach (var a in dplist)
+            {
+                if (a.par.Req && a.tb.SelectedDate == null)
+                    return "Не заполнены все обязательные поля";
+            }
+            foreach (var a in cblist)
+            {
+                if (a.par.Req && a.tb.Items == null)
+                    return "Не заполнены все обязательные поля";
+            }
+
+            return "1";
+        }
+
+
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            Dictionary<Type, Action> @switch = new Dictionary<Type, Action> {
+            { typeof(Author), () => CreateAuthor() },
+            { typeof(AccessCategory), () => CreateAccessCategory()},
+            };
 
+            string result = ValidateData();
+            if(result!="1")
+            {
+                MessageBox.Show(result);
+                return;
+            }
+
+            
+
+            @switch[ModelType]();
+
+        }
+
+        public void CreateAuthor()
+        {
+            Author author = new Author();
+            author.FirstName = tblist[0].tb.Text;
+            author.LastName = tblist[1].tb.Text;
+            author.MiddleName = tblist[2].tb.Text;
+            author.BirthDate = dplist[0].tb.SelectedDate;
+
+
+            //author.Gender = cblist[0].tb.SelectedItem as Gender;
+            author.Gender = _context.Genders.Where(a => a.ToString() == cblist[0].tb.SelectedItem.ToString()).First();
+
+            //Gender? gender = cblist[0].tb.SelectedItem.ToString();
+
+            MessageBox.Show(author.ToString() + author.GenderID.ToString());
+        }
+
+        public void CreateAccessCategory()
+        {
+            MessageBox.Show("Категория доступа");
         }
     }
 }

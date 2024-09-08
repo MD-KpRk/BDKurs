@@ -1,5 +1,43 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BDKurs.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Windows.Forms;
+
+
+public class Repository
+{
+    private readonly LibraryDbContext _context;
+
+    public Repository(LibraryDbContext context)
+    {
+        _context = context;
+    }
+
+    // Метод для получения DbSet по строковому названию
+    public List<BDObject> GetDbSetByName(string entityName)
+    {
+        // Получаем тип контекста
+        var contextType = _context.GetType();
+
+        // Ищем свойство по имени entityName
+        var property = contextType.GetProperty(entityName);
+
+        if (property == null)
+        {
+            throw new ArgumentException($"DbSet with name {entityName} not found.");
+        }
+
+        // Получаем значение DbSet как IQueryable
+        var dbSet = property.GetValue(_context) as IQueryable;
+
+        if (dbSet == null)
+        {
+            throw new InvalidOperationException($"Unable to retrieve DbSet for {entityName}.");
+        }
+
+        // Преобразуем результат в List<object>
+        return dbSet.Cast<BDObject>().ToList();
+    }
+}
 
 public class LibraryDbContext : DbContext
 {
@@ -27,25 +65,7 @@ public class LibraryDbContext : DbContext
         // Здесь можно настроить дополнительные конфигурации, если необходимо
     }
 
-    public static IQueryable GetDbSetByName(string entityName, LibraryDbContext _context)
-    {
-        // Получаем тип контекста
-        Type contextType = _context.GetType();
 
 
-        // Ищем свойство по имени entityName
-        System.Reflection.PropertyInfo? property = contextType.GetProperty(entityName);
-        MessageBox.Show("prop: " + property.Name);
 
-        if (property == null)
-        {
-            throw new ArgumentException($"DbSet with name {entityName} not found.");
-        }
-
-        // Получаем значение DbSet из контекста
-        var dbSet = property.GetValue(_context);
-
-        // Возвращаем DbSet как IQueryable для дальнейшего использования
-        return dbSet as IQueryable;
-    }
 }

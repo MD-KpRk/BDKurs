@@ -27,7 +27,7 @@ public class Author : BDObject
     public string? MiddleName { get; set; } // Nullable
 
     [ColumnName("Дата рождения")]
-    public DateTime BirthDate { get; set; } // Nullable
+    public DateTime? BirthDate { get; set; } // Nullable
 
     [Hidden]
     [ForeignKey("GenderID")]
@@ -43,6 +43,6 @@ public class Author : BDObject
 
     override public string ToString()
     {
-        return FirstName +" "+ MiddleName;
+        return FirstName + " "+ LastName + " " + MiddleName;
     }
 }

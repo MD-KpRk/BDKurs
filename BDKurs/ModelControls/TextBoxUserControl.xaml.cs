@@ -18,8 +18,10 @@ namespace BDKurs.ModelControls
 {
     public partial class TextBoxUserControl : UserControl
     {
-        public TextBoxUserControl(Params par)
+        public Params par;
+        public TextBoxUserControl(Params _par)
         {
+            par = _par;
             InitializeComponent();
 
             if(par.Req )

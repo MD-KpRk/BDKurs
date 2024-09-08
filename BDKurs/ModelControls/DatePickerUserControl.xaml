@@ -17,11 +17,11 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Calendar}">
                         <!-- Wrapping in ViewBox will enlarge calendar of that size.-->
-                        <Viewbox Height="240" Width="240" Stretch="Fill">
+                        <Viewbox Height="240" Width="200" Stretch="Fill">
                             <CalendarItem x:Name="PART_CalendarItem"
                                   Background="{TemplateBinding Background}"
                                   BorderBrush="{TemplateBinding BorderBrush}"
-                                  FontSize="10"
+                                 
                                   BorderThickness="{TemplateBinding BorderThickness}"/>
                         </Viewbox>
                     </ControlTemplate>

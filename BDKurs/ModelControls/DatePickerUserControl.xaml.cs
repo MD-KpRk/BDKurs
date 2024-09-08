@@ -20,8 +20,10 @@ namespace BDKurs.ModelControls
     /// </summary>
     public partial class DatePickerUserControl : UserControl
     {
-        public DatePickerUserControl(Params par)
+        public Params par;
+        public DatePickerUserControl(Params _par)
         {
+            par = _par;
             InitializeComponent();
             if (par.Req)
                 lb.Content = par.ColumnName + "*";
