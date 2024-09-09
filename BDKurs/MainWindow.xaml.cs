@@ -73,9 +73,9 @@ namespace BDKurs
                     case Tables.BookOrder:
                         currentchoose = value;
                         LoadData("Ордера", () => _context.BookOrders
+                        .Include(a => a.Book)
                         .Include(a => a.Reader)
                         .Include(a => a.Employee)
-                        .Include(a => a.Book)
                         .AsQueryable());
                         break;
 
@@ -169,15 +169,11 @@ namespace BDKurs
         }
 
 
-        public MainWindow()
+        public MainWindow(LibraryDbContext _context)
         {
             InitializeComponent();
-            if (App.ServiceProvider == null)
-                throw new InvalidOperationException("ServiceProvider не был инициализирован.");
-            _context = App.ServiceProvider.GetRequiredService<LibraryDbContext>();
-            if (_context == null)
-                throw new InvalidOperationException("LibraryDbContext не был зарегистрирован.");
 
+            this._context = _context;
 
             CurrentChoose = Tables.Author;
         }

@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 public class Employee : BDObject
 {
+    [ColumnName("Номер")]
     [Key]
     [NonEditable]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -23,6 +24,11 @@ public class Employee : BDObject
     [ColumnName("Отчество")]
     [MaxLength(30)]
     public string? MiddleName { get; set; }
+
+    [ColumnName("Пароль")]
+    [Required]
+    [MaxLength(20)]
+    public string Passw { get; set; } = "";
 
     [ColumnName("Телефон")]
     [MaxLength(30)]
@@ -55,6 +61,6 @@ public class Employee : BDObject
 
     override public string ToString()
     {
-        return FirstName.ToString();
+        return FirstName + " " + LastName + " " + AccessCategory;
     }
 }

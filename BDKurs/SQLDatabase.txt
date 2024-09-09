@@ -108,6 +108,7 @@ CREATE TABLE Employees (
     FirstName VARCHAR(30) NOT NULL,
     LastName VARCHAR(30) NOT NULL,
     MiddleName VARCHAR(30),
+	Passw VARCHAR(20) NOT NULL,
     Phone VARCHAR(30),
     Email VARCHAR(30),
     GenderID INT FOREIGN KEY REFERENCES Genders(GenderID),
@@ -196,3 +197,5 @@ INSERT INTO BookOrders (BookOrderDate, ReturnDate, ActualReturnDate, BookID, Rea
 GO
 
 SELECT * FROM Genders
+
+Delete * from 
