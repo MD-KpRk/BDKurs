@@ -11,10 +11,13 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="60"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" x:Name="stack" Grid.RowSpan="2">
 
-        </StackPanel>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0 0 0 20">
+            <StackPanel Grid.Row="0" x:Name="stack" Grid.RowSpan="2">
 
+            </StackPanel>
+
+        </ScrollViewer>
         <Button Grid.Row="1" Margin="30 0 30 20" Click="Button_Click" Content="Подтвердить" />
     </Grid>
 </Window>

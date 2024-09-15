@@ -43,6 +43,7 @@ namespace BDKurs
         List<TextBoxUserControl> tblist = new List<TextBoxUserControl>();
         List<DatePickerUserControl> dplist = new List<DatePickerUserControl>();
         List<ComboBoxUserControl> cblist = new List<ComboBoxUserControl>();
+        List<CheckBoxUserControl> chblist = new List<CheckBoxUserControl>();
 
         LibraryDbContext _context;
         public Type ModelType;
@@ -96,6 +97,12 @@ namespace BDKurs
                     DatePickerUserControl newdp = new DatePickerUserControl(abc);
                     dplist.Add(newdp);
                     stack.Children.Add(newdp);
+                }
+                else if (abc.PropertyType == typeof(bool))
+                {
+                    CheckBoxUserControl newchb = new CheckBoxUserControl(abc);
+                    chblist.Add(newchb);
+                    stack.Children.Add(newchb);
                 }
                 else
                 {
@@ -160,13 +167,11 @@ namespace BDKurs
             author.MiddleName = tblist[2].tb.Text;
             author.BirthDate = dplist[0].tb.SelectedDate;
 
+            author.Gender = (Gender)cblist[0].tb.SelectedItem;
 
-            //author.Gender = cblist[0].tb.SelectedItem as Gender;
-            author.Gender = _context.Genders.Where(a => a.ToString() == cblist[0].tb.SelectedItem.ToString()).First();
-
-            //Gender? gender = cblist[0].tb.SelectedItem.ToString();
-
-            MessageBox.Show(author.ToString() + author.GenderID.ToString());
+            _context.Authors.Add(author);
+            _context.SaveChanges();
+            Close();
         }
 
         public void CreateAccessCategory()

@@ -40,6 +40,8 @@ namespace BDKurs
 
         private Tables currentchoose;
 
+        AccessCategory currentAcess;
+
         public Tables CurrentChoose {
 
             get
@@ -52,7 +54,7 @@ namespace BDKurs
                 {
                     case Tables.AccessCategory:
                         currentchoose = value;
-                        LoadData("Категории доступа", () => _context.AccessCategories.AsQueryable());
+                        LoadData("Категории доступа", () => _context.AccessCategorys.AsQueryable());
                         break;
 
                     case Tables.Author:
@@ -111,12 +113,12 @@ namespace BDKurs
 
                     case Tables.ReaderCategory:
                         currentchoose = value;
-                        LoadData("Категории читателей", () => _context.ReaderCategories.AsQueryable());
+                        LoadData("Категории читателей", () => _context.ReaderCategorys.AsQueryable());
                         break;
 
                     case Tables.Status:
                         currentchoose = value;
-                        LoadData("Статусы книг", () => _context.Statuses.AsQueryable());
+                        LoadData("Статусы книг", () => _context.Statuss.AsQueryable());
                         break;
 
                     default:
@@ -169,13 +171,16 @@ namespace BDKurs
         }
 
 
-        public MainWindow(LibraryDbContext _context)
+        public MainWindow(LibraryDbContext _context, AccessCategory currAcess)
         {
             InitializeComponent();
 
             this._context = _context;
 
             CurrentChoose = Tables.Author;
+
+            currentAcess = currAcess;
+            lbb1.Text = currentAcess.Name;
         }
 
 
@@ -202,7 +207,15 @@ namespace BDKurs
             => CurrentChoose = Tables.Reader;
 
         private void MenuItem_Click_Employees(object sender, RoutedEventArgs e)
-            => CurrentChoose = Tables.Employee;
+        {
+            if(currentAcess.AddAcess == false || currentAcess.EditAcess == false || currentAcess.DeleteAcess == false)
+            {
+                MessageBox.Show("Для доступа к этой таблице нужны права на добавление/редактирование/удаление");
+                return;
+            }
+            CurrentChoose = Tables.Employee;
+
+        }
 
         private void MenuItem_Click_Positions(object sender, RoutedEventArgs e)
             => CurrentChoose = Tables.Position;
@@ -238,14 +251,6 @@ namespace BDKurs
         private void SetGridColor(Grid g, byte R,byte G, byte B) => g.Background = new SolidColorBrush(Color.FromRgb(R, G, B));
         #endregion
 
-        private void AddButton_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-
-            ModelWindow modelBuilder = new ModelWindow(Enum.GetName(CurrentChoose), _context);
-            modelBuilder.ShowDialog();
-
-        }
-
         private void ReloadButton_MouseUp(object sender, MouseButtonEventArgs e)
         {
             // Логика обновления данных
@@ -254,18 +259,47 @@ namespace BDKurs
 
         }
 
+        private void AddButton_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (currentAcess.AddAcess == false)
+            {
+                MessageBox.Show("Вашей категории запрещено данное действие");
+                return;
+            }
+
+            ModelWindow modelBuilder = new ModelWindow(Enum.GetName(CurrentChoose), _context);
+            modelBuilder.ShowDialog();
+            CurrentChoose = currentchoose;
+        }
+
         private void RemoveButton_MouseUp(object sender, MouseButtonEventArgs e)
         {
+            if(currentAcess.DeleteAcess == false)
+            {
+                MessageBox.Show("Вашей категории запрещено данное действие");
+                return;
+
+            }
             // Логика удаления записи
             MessageBox.Show("Удалить запись");
         }
 
         private void EditButton_MouseUp(object sender, MouseButtonEventArgs e)
         {
+            if (currentAcess.EditAcess == false)
+            {
+                MessageBox.Show("Вашей категории запрещено данное действие");
+                return;
+
+            }
             // Логика редактирования записи
             MessageBox.Show("Редактировать запись");
         }
 
-
+        private void MenuItem_Click(object sender, RoutedEventArgs e) // leave
+        {
+            new AuthWindow().Show();
+            Close();
+        }
     }
 }

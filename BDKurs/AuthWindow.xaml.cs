@@ -36,20 +36,40 @@ namespace BDKurs
         private void Button_Click(object sender, RoutedEventArgs e)
         {
 
+            if (cb.SelectedItem == null) return;
 
+            Employee currentEmp = (Employee)cb.SelectedItem;
+
+            if (currentEmp.Passw == tb3.Password)
+            {
+
+                new MainWindow(_context, currentEmp.AccessCategory).Show();
+                Close();
+
+            }
+            else
+            {
+                MessageBox.Show("Указан неправильный пароль","Ошибка",MessageBoxButton.OK,MessageBoxImage.Stop);
+            }
             // if passed
-            new MainWindow(_context).Show();
-            Close();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            List<Employee> list = _context.Employees.Include(a => a.AccessCategory).ToList();
-
-            if(list != null && list.Count>0)
+            try
             {
-                cb.ItemsSource = list;
-                cb.SelectedIndex = 0;
+                List<Employee> list = _context.Employees.Include(a => a.AccessCategory).ToList();
+
+                if (list != null && list.Count > 0)
+                {
+                    cb.ItemsSource = list;
+                    cb.SelectedIndex = 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Возникла ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
 
         }

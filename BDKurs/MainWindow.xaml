@@ -14,8 +14,14 @@
             <RowDefinition Height="25"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Menu Height="25">
-            <MenuItem Header="База данных" FontFamily="Yu Gothic UI" FontSize="14">
+        <Grid>
+            <Grid.ColumnDefinitions>
+
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="200"/>
+            </Grid.ColumnDefinitions>
+            <Menu Height="25" Grid.Column="0">
+            <MenuItem Header="База данных" FontFamily="Yu Gothic UI" FontSize="14" >
                 <MenuItem Header="Авторы" Click="MenuItem_Click_Authors" />
                 <MenuItem Header="Книги" Click="MenuItem_Click_Books" />
                 <MenuItem Header="Издательства" Click="MenuItem_Click_Publishers" />
@@ -42,9 +48,14 @@
                 </MenuItem>
                 <MenuItem Header="Print Orders" FontFamily="Yu Gothic UI" FontSize="14" />
             </MenuItem>
-        </Menu>
+                <MenuItem Header="Выход" FontFamily="Yu Gothic UI" FontSize="14" Click="MenuItem_Click">
+                    
+                </MenuItem>
+            </Menu>
 
-        <Grid Background="White" MinHeight="400" Grid.Row="1">
+            <TextBlock x:Name="lbb1" Grid.Column="1" Text="Категория"  FontFamily="Yu Gothic UI" FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 2 10 0"/>
+        </Grid>
+                <Grid Background="White" MinHeight="400" Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="10"/>
                 <RowDefinition Height="*"/>
