@@ -43,6 +43,7 @@ public class Employee : BDObject
     public int GenderID { get; set; }
 
     [ColumnName("Пол")]
+    [Required]
     public Gender Gender { get; set; }
 
     [Hidden]

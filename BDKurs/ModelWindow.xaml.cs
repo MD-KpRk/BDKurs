@@ -176,7 +176,18 @@ namespace BDKurs
 
         public void CreateAccessCategory()
         {
-            MessageBox.Show("Категория доступа");
+            AccessCategory category = new AccessCategory();
+
+            category.Name = tblist[0].tb.Text;
+
+            category.AddAcess = (bool)chblist[0].tb.IsChecked;
+            category.EditAcess = (bool)chblist[1].tb.IsChecked;
+            category.DeleteAcess = (bool)chblist[2].tb.IsChecked;
+
+            _context.AccessCategorys.Add(category);
+            _context.SaveChanges();
+            Close ();
+
         }
     }
 }
