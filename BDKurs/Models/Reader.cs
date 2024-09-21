@@ -41,6 +41,7 @@ public class Reader : BDObject
     [MaxLength(30)]
     public string? Email { get; set; } // NULL
 
+    [Required]
     [Hidden]
     [ForeignKey("GenderID")]
     public int GenderID { get; set; }
@@ -51,11 +52,10 @@ public class Reader : BDObject
 
     [Hidden]
     [ForeignKey("ReaderCategoryID")]
-    public int ReaderCategoryID { get; set; }
+    public int? ReaderCategoryID { get; set; }
 
-    [Required]
     [ColumnName("Категория")]
-    public ReaderCategory ReaderCategory { get; set; }
+    public ReaderCategory? ReaderCategory { get; set; }
 
 
     override public string ToString()

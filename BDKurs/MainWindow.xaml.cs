@@ -232,7 +232,6 @@ namespace BDKurs
         private void MenuItem_Click_BooksStatuses(object sender, RoutedEventArgs e)
              => CurrentChoose = Tables.Status;
 
-        // Обработчики кнопок
         #region Стиль кнопок
 
         bool pressed = false;
@@ -253,10 +252,8 @@ namespace BDKurs
 
         private void ReloadButton_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            // Логика обновления данных
             CurrentChoose = currentchoose;
             MessageBox.Show("Данные обновлены");
-
         }
 
         private void AddButton_MouseUp(object sender, MouseButtonEventArgs e)
@@ -267,7 +264,7 @@ namespace BDKurs
                 return;
             }
 
-            ModelWindow modelBuilder = new ModelWindow(Enum.GetName(CurrentChoose), _context);
+            ModelWindow modelBuilder = new ModelWindow(Enum.GetName(CurrentChoose), _context, null);
             modelBuilder.ShowDialog();
             CurrentChoose = currentchoose;
         }
@@ -280,8 +277,24 @@ namespace BDKurs
                 return;
 
             }
-            // Логика удаления записи
-            MessageBox.Show("Удалить запись");
+            if (dg1.SelectedItem == null)
+            {
+                MessageBox.Show("Выделите объект удаления");
+                return;
+            }
+            if (MessageBox.Show("Вы уверены, что хотите удалить выделенные элементы?", "Подтверждение удаления", MessageBoxButton.YesNo) == MessageBoxResult.No)
+            {
+                return;
+            }
+
+            foreach (var item in dg1.SelectedItems)
+            {
+                _context.Remove(item);
+            }
+
+            _context.SaveChanges();
+
+            CurrentChoose = currentchoose;
         }
 
         private void EditButton_MouseUp(object sender, MouseButtonEventArgs e)
@@ -292,8 +305,21 @@ namespace BDKurs
                 return;
 
             }
-            // Логика редактирования записи
-            MessageBox.Show("Редактировать запись");
+
+            if (dg1.SelectedItem == null)
+            {
+                MessageBox.Show("Выделите объект редактирования");
+                return;
+            }
+            if(dg1.SelectedItems.Count >1)
+            {
+                MessageBox.Show("За раз можно редактировать только 1 объект");
+                return;
+            }
+
+            ModelWindow modelBuilder = new ModelWindow(Enum.GetName(CurrentChoose), _context, dg1.SelectedItem);
+            modelBuilder.ShowDialog();
+            CurrentChoose = currentchoose;
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e) // leave

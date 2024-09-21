@@ -13,7 +13,7 @@ public class Repository
     }
 
     // Метод для получения DbSet по строковому названию
-    public List<BDObject> GetDbSetByName(string entityName)
+    public List<BDObject>? GetDbSetByName(string entityName)
     {
         // Получаем тип контекста
         var contextType = _context.GetType();
@@ -27,7 +27,7 @@ public class Repository
         }
 
         // Получаем значение DbSet как IQueryable
-        var dbSet = property.GetValue(_context) as IQueryable;
+        IQueryable? dbSet = property.GetValue(_context) as IQueryable;
 
         if (dbSet == null)
         {
@@ -35,7 +35,16 @@ public class Repository
         }
 
         // Преобразуем результат в List<object>
-        return dbSet.Cast<BDObject>().ToList();
+        try
+        {
+            return dbSet.Cast<BDObject>().ToList();
+
+        }
+        catch (Exception ex) 
+        {
+            MessageBox.Show(ex.Message);
+            return null;
+        }
     }
 }
 

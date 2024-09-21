@@ -49,22 +49,19 @@ namespace BDKurs
 
         LibraryDbContext _context;
         public Type ModelType;
+        object? amogus;
 
         public List<Params> GetPropertyDetails(Type type)
         {
-            var result = new List<Params>();
-
-            // Перебор всех свойств типа
+            List<Params> result = new List<Params>();
             foreach (var property in type.GetProperties())
             {
                 string? atrname = property.GetCustomAttribute<ColumnNameAttribute>()?.Name;
                 int? maxlength = property.GetCustomAttribute<MaxLengthAttribute>()?.Length;
-
                 if (atrname != null && property.GetCustomAttribute<HiddenAttribute>() == null && property.GetCustomAttribute<NonEditable>() == null)
                 {
                     int newlength;
                     bool req = false;
-
                     if (property.GetCustomAttribute<RequiredAttribute>() != null) req = true; 
 
                     if (maxlength == null) newlength = -1;
@@ -78,42 +75,48 @@ namespace BDKurs
         }
 
 
-        public ModelWindow(string typeName, LibraryDbContext context)
+        public ModelWindow(string typeName, LibraryDbContext context, object? obj)
         {
+            amogus = obj;
             _context = context;
             ModelType = Type.GetType(typeName);
             List<Params> paramslist = GetPropertyDetails(ModelType);
             InitializeComponent();
 
-            foreach (Params abc in paramslist)
+            for(int i = 0; i< paramslist.Count();i++)
             {
-                //
-                if (abc.PropertyType == typeof(string) || abc.PropertyType == typeof(int) || abc.PropertyType == typeof(int?))
+                if (paramslist[i].PropertyType == typeof(string) || paramslist[i].PropertyType == typeof(int) || paramslist[i].PropertyType == typeof(int?))
                 {
-                    TextBoxUserControl newtb = new TextBoxUserControl(abc);
+                    TextBoxUserControl newtb = new TextBoxUserControl(paramslist[i]);
+                    if(obj!=null)
+                        newtb.tb.Text = ModelType.GetProperty(paramslist[i].FieldName)?.GetValue(obj)?.ToString();
                     tblist.Add(newtb);
                     stack.Children.Add(newtb);
                 }
-                else if (abc.PropertyType == typeof(DateTime) || abc.PropertyType == typeof(DateTime?))
+                else if (paramslist[i].PropertyType == typeof(DateTime) || paramslist[i].PropertyType == typeof(DateTime?))
                 {
-                    DatePickerUserControl newdp = new DatePickerUserControl(abc);
+                    DatePickerUserControl newdp = new DatePickerUserControl(paramslist[i]);
+                    if (obj != null)
+                        newdp.tb.SelectedDate = Convert.ToDateTime(ModelType.GetProperty(paramslist[i].FieldName)?.GetValue(obj));
                     dplist.Add(newdp);
                     stack.Children.Add(newdp);
                 }
-                else if (abc.PropertyType == typeof(bool))
+                else if (paramslist[i].PropertyType == typeof(bool))
                 {
-                    CheckBoxUserControl newchb = new CheckBoxUserControl(abc);
+                    CheckBoxUserControl newchb = new CheckBoxUserControl(paramslist[i]);
+                    if (obj != null)
+                        newchb.tb.IsChecked = Convert.ToBoolean(ModelType.GetProperty(paramslist[i].FieldName)?.GetValue(obj));
                     chblist.Add(newchb);
                     stack.Children.Add(newchb);
                 }
                 else
                 {
-                    ComboBoxUserControl newcb = new ComboBoxUserControl(abc,_context);
+                    ComboBoxUserControl newcb = new ComboBoxUserControl(paramslist[i], _context);
+                    if (obj != null)
+                        newcb.tb.SelectedItem = ModelType.GetProperty(paramslist[i].FieldName)?.GetValue(obj);
                     cblist.Add(newcb);
-
                     stack.Children.Add(newcb);
                 }
-                //else MessageBox.Show("Ошибка процедурной генерации окна " + abc.PropertyType);
             }
 
         }
@@ -121,21 +124,14 @@ namespace BDKurs
         public string ValidateData()
         {
             foreach(var a in tblist)
-            {
                 if (a.par.Req && string.IsNullOrEmpty(a.tb.Text))
                     return "Не заполнены все обязательные поля";
-            }
             foreach (var a in dplist)
-            {
                 if (a.par.Req && a.tb.SelectedDate == null)
                     return "Не заполнены все обязательные поля";
-            }
             foreach (var a in cblist)
-            {
                 if (a.par.Req && a.tb.Items == null)
                     return "Не заполнены все обязательные поля";
-            }
-
             return "1";
         }
 
@@ -143,19 +139,19 @@ namespace BDKurs
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Dictionary<Type, Action> @switch = new Dictionary<Type, Action> {
-            { typeof(Author), () => CreateAuthor() },
-            { typeof(AccessCategory), () => CreateAccessCategory()},
-            { typeof(Book), () => CreateBook()},
-            { typeof(BookOrder), () => CreateBookOrder()},
-            { typeof(Employee), () => CreateEmployee()},
-            { typeof(Genre), () => CreateGenre()},
-            { typeof(Publisher), () => CreatePublisher()},
-            { typeof(Reader), () => CreateReader()},
-            { typeof(ReaderCategory), () => CreateReaderCategory()},
-            { typeof(Status), () => CreateStatus()},
+            Dictionary<Type, Action<object>> @switch = new Dictionary<Type, Action<object>> {
+            { typeof(Author),           (obj) => CreateAuthor(obj) },
+            { typeof(AccessCategory),   (obj) => CreateAccessCategory(obj)},
+            { typeof(Book),             (obj) => CreateBook(obj)},
+            { typeof(BookOrder),        (obj) => CreateBookOrder(obj)},
+            { typeof(Employee),         (obj) => CreateEmployee(obj)},
+            { typeof(Genre),            (obj) => CreateGenre(obj)},
+            { typeof(Publisher),        (obj) => CreatePublisher(obj)},
+            { typeof(Reader),           (obj) => CreateReader(obj)},
+            { typeof(ReaderCategory),   (obj) => CreateReaderCategory(obj)},
+            { typeof(Status),           (obj) => CreateStatus(obj)},
+            { typeof(Position),         (obj) => CreatePosition(obj)},
             };
-
             string result = ValidateData();
             if(result!="1")
             {
@@ -163,55 +159,59 @@ namespace BDKurs
                 return;
             }
 
-            
-
-            @switch[ModelType]();
-
+            @switch[ModelType](amogus);
         }
 
-        public void CreateAccessCategory()
+        public void CreateAccessCategory(object? obj = null)
         {
-            AccessCategory category = new AccessCategory();
+            AccessCategory category;
+            if(obj == null)
+                category = new AccessCategory();
+            else
+                category = amogus as AccessCategory;
 
             category.Name = tblist[0].tb.Text;
-
             category.AddAcess = (bool)chblist[0].tb.IsChecked;
             category.EditAcess = (bool)chblist[1].tb.IsChecked;
             category.DeleteAcess = (bool)chblist[2].tb.IsChecked;
-
-            _context.AccessCategorys.Add(category);
+            if (obj == null)
+                _context.AccessCategorys.Add(category);
             _context.SaveChanges();
-            Close();
 
+            Close();
         }
 
-        public void CreateAuthor()
+        public void CreateAuthor(object? obj = null)
         {
-            Author author = new Author();
+            Author author;
+            if (obj == null)
+                author = new Author();
+            else
+                author = amogus as Author;
             author.FirstName = tblist[0].tb.Text;
             author.LastName = tblist[1].tb.Text;
             author.MiddleName = tblist[2].tb.Text;
             author.BirthDate = dplist[0].tb.SelectedDate;
-
             author.Gender = (Gender)cblist[0].tb.SelectedItem;
-
-            _context.Authors.Add(author);
+            if (obj == null)
+                _context.Authors.Add(author);
             _context.SaveChanges();
             Close();
         }
 
-        public void CreateBook()
+        public void CreateBook(object? obj = null)
         {
-            Book book = new Book();
+            Book book;
+            if (obj == null)
+                book = new Book();
+            else
+                book = amogus as Book;
             book.ISBN = tblist[0].tb.Text;
             book.Title = tblist[1].tb.Text;
             if (string.IsNullOrEmpty(tblist[2].tb.Text))
-            {
                 book.PublicationYear = null;
-            }
             else
                 book.PublicationYear = Convert.ToInt32(tblist[2].tb.Text);
-
             if(cblist[0].tb.SelectedItem != null)
                 book.Publisher = (Publisher)cblist[0].tb.SelectedItem;
             if(cblist[1].tb.SelectedItem != null)
@@ -220,138 +220,150 @@ namespace BDKurs
                 book.Status = (Status)cblist[2].tb.SelectedItem;
             if(cblist[3].tb.SelectedItem != null)
                 book.Genre = (Genre)cblist[3].tb.SelectedItem;
-
-            try
-            {
+            if (obj == null)
                 _context.Books.Add(book);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message,"Повторение ISBN запрещено");
-            }
             _context.SaveChanges();
             Close();
         }
 
-        public void CreateBookOrder()
+        public void CreateBookOrder(object? obj = null)
         {
-            BookOrder bookOrder = new BookOrder();
-
+            BookOrder bookOrder;
+            if (obj == null)
+                bookOrder = new BookOrder();
+            else
+                bookOrder = amogus as BookOrder;
             bookOrder.BookOrderDate = (DateTime)dplist[0].tb.SelectedDate;
             bookOrder.ReturnDate = (DateTime)dplist[1].tb.SelectedDate;
             bookOrder.ActualReturnDate = dplist[2].tb.SelectedDate;
-
             bookOrder.Book = (Book)cblist[0].tb.SelectedItem;
             bookOrder.Reader = (Reader)cblist[1].tb.SelectedItem;
             bookOrder.Employee = (Employee)cblist[2].tb.SelectedItem;
-
-            _context.BookOrders.Add(bookOrder);
+            if (obj == null)
+                _context.BookOrders.Add(bookOrder);
             _context.SaveChanges();
             Close();
         }
 
-        public void CreateEmployee()
+        public void CreateEmployee(object? obj = null)
         {
-            Employee employee = new Employee();
-
+            Employee employee;
+            if (obj == null)
+                employee = new Employee();
+            else
+                employee = amogus as Employee;
             employee.FirstName = tblist[0].tb.Text;
             employee.LastName = tblist[1].tb.Text;
             employee.MiddleName = tblist[2].tb.Text;
             employee.Passw = tblist[3].tb.Text;
             employee.Phone = tblist[4].tb.Text;
             employee.Email = tblist[5].tb.Text;
-
             employee.Gender = (Gender)cblist[0].tb.SelectedItem;
             employee.Position = (Position)cblist[1].tb.SelectedItem;
             employee.AccessCategory = (AccessCategory)cblist[2].tb.SelectedItem;
 
-            _context.Employees.Add(employee);
+            if (obj == null)
+                _context.Employees.Add(employee);
             _context.SaveChanges();
             Close();
         }
 
-        public void CreateGenre()
+        public void CreateGenre(object? obj = null)
         {
-            Genre genre = new Genre();
-
+            Genre genre;
+            if (obj == null)
+                genre = new Genre();
+            else
+                genre = amogus as Genre;
             genre.Name = tblist[0].tb.Text;
 
-            _context.Genres.Add(genre);
+            if (obj == null)
+                _context.Genres.Add(genre);
             _context.SaveChanges();
             Close();
         }
 
-        public void CreatePosition()
+        public void CreatePosition(object? obj = null)
         {
-            Position pos = new Position();
-
+            Position pos;
+            if (obj == null)
+                pos = new Position();
+            else
+                pos = amogus as Position;
             pos.Name = tblist[0].tb.Text;
-
-            _context.Positions.Add(pos);
+            if (obj == null)
+                _context.Positions.Add(pos);
             _context.SaveChanges();
             Close();
         }
 
-        public void CreatePublisher()
+        public void CreatePublisher(object? obj = null)
         {
-            Publisher publisher = new Publisher();
-
+            Publisher publisher;
+            if (obj == null)
+                publisher = new Publisher();
+            else
+                publisher = amogus as Publisher;
             publisher.Name = tblist[0].tb.Text;
             publisher.Address = tblist[1].tb.Text;
             publisher.Phone = tblist[2].tb.Text;
             publisher.Email = tblist[3].tb.Text;
 
-            _context.Publishers.Add(publisher);
+            if (obj == null)
+                _context.Publishers.Add(publisher);
             _context.SaveChanges();
-
             Close();
         }
 
-        public void CreateReader()
+        public void CreateReader(object? obj = null)
         {
-            Reader reader = new Reader();
-
+            Reader reader;
+            if (obj == null)
+                reader = new Reader();
+            else
+                reader = amogus as Reader;
             reader.FirstName = tblist[0].tb.Text;
             reader.LastName = tblist[1].tb.Text;
             reader.MiddleName = tblist[2].tb.Text;
-
             if(dplist[0].tb.SelectedDate != null)
-                reader.BirthDate = dplist[1].tb.SelectedDate;
-
+                reader.BirthDate = dplist[0].tb.SelectedDate;
             reader.Address = tblist[3].tb.Text;
             reader.Phone = tblist[4].tb.Text;
             reader.Email = tblist[5].tb.Text;
 
             reader.Gender = (Gender)cblist[0].tb.SelectedItem;
             reader.ReaderCategory = (ReaderCategory)cblist[1].tb.SelectedItem;
-
-            _context.Readers.Add(reader);
+            if (obj == null)
+                _context.Readers.Add(reader);
             _context.SaveChanges();
-
             Close();
-
         }
 
-        public void CreateReaderCategory()
+        public void CreateReaderCategory(object? obj = null)
         {
-            ReaderCategory readerCategory = new ReaderCategory();
-
+            ReaderCategory readerCategory;
+            if (obj == null)
+                readerCategory = new ReaderCategory();
+            else
+                readerCategory = amogus as ReaderCategory;
             readerCategory.Name = tblist[0].tb.Text;
-
-            _context.ReaderCategorys.Add(readerCategory);
+            if (obj == null)
+                _context.ReaderCategorys.Add(readerCategory);
             _context.SaveChanges();
-
             Close();
         }
-        public void CreateStatus()
+        public void CreateStatus(object? obj = null)
         {
-            Status status = new Status();
-
+            Status status;
+            if (obj == null)
+                status = new Status();
+            else
+                status = amogus as Status;
             status.Name = tblist[0].tb.Text;
 
-            _context.Statuss.Add(status);
+            if (obj == null)
+                _context.Statuss.Add(status);
             _context.SaveChanges();
-
             Close();
         }
 

@@ -28,20 +28,25 @@ public class BookOrder : BDObject
     [ForeignKey("ISBN")]
     public string BookID { get; set; }
 
+    [Required]
     [ColumnName("Книга")]
     public Book Book { get; set; }
 
+    [Required]
     [Hidden]
     [ForeignKey("ReaderID")]
     public int ReaderID { get; set; }
 
+    [Required]
     [ColumnName("Читатель")]
     public Reader Reader { get; set; }
 
+    [Required]
     [Hidden]
     [ForeignKey("EmployeeID")]
     public int EmployeeID { get; set; }
 
+    [Required]
     [ColumnName("Сотрудник")]
     public Employee Employee { get; set; }
 
