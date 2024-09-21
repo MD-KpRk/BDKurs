@@ -125,8 +125,6 @@ namespace BDKurs
                         MessageBox.Show("Таблица не найдена");
                         break;
                 }
-
-
                 currentchoose = value;
             }
         }
@@ -287,14 +285,36 @@ namespace BDKurs
                 return;
             }
 
-            foreach (var item in dg1.SelectedItems)
+            try
             {
-                _context.Remove(item);
+                foreach (var item in dg1.SelectedItems)
+                {
+                    _context.Remove(item);
+                }
+                _context.SaveChanges();
             }
-
-            _context.SaveChanges();
-
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                CancelChanges();
+            }
             CurrentChoose = currentchoose;
+        }
+
+        private void CancelChanges()
+        {
+            var changedEntries = _context.ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Modified || e.State == EntityState.Added || e.State == EntityState.Deleted)
+                .ToList();
+            foreach (var entry in changedEntries)
+            {
+                if (entry.State == EntityState.Modified)
+                    entry.State = EntityState.Unchanged;
+                else if (entry.State == EntityState.Added)
+                    entry.State = EntityState.Detached;
+                else if (entry.State == EntityState.Deleted)
+                    entry.Reload();
+            }
         }
 
         private void EditButton_MouseUp(object sender, MouseButtonEventArgs e)

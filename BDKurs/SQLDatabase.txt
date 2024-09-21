@@ -114,9 +114,9 @@ CREATE TABLE Employees (
 	Passw VARCHAR(20) NOT NULL,
     Phone VARCHAR(30),
     Email VARCHAR(30),
-    GenderID INT FOREIGN KEY REFERENCES Genders(GenderID),
-    PositionID INT FOREIGN KEY REFERENCES Positions(PositionID),
-    AccessCategoryID INT FOREIGN KEY REFERENCES AccessCategorys(AccessCategoryID)
+    GenderID INT FOREIGN KEY REFERENCES Genders(GenderID) NOT NULL,
+    PositionID INT FOREIGN KEY REFERENCES Positions(PositionID) NOT NULL,
+    AccessCategoryID INT FOREIGN KEY REFERENCES AccessCategorys(AccessCategoryID) NOT NULL
 );
 GO
 
@@ -126,9 +126,9 @@ CREATE TABLE BookOrders (
     BookOrderDate DATE NOT NULL,
     ReturnDate DATE NOT NULL,
     ActualReturnDate DATE,
-    BookID VARCHAR(15) FOREIGN KEY REFERENCES Books(ISBN),
-    ReaderID INT FOREIGN KEY REFERENCES Readers(ReaderID),
-    EmployeeID INT FOREIGN KEY REFERENCES Employees(EmployeeID)
+    BookID VARCHAR(15) FOREIGN KEY REFERENCES Books(ISBN) NOT NULL,
+    ReaderID INT FOREIGN KEY REFERENCES Readers(ReaderID) NOT NULL ,
+    EmployeeID INT FOREIGN KEY REFERENCES Employees(EmployeeID) NOT NULL
 );
 GO
 
@@ -163,6 +163,7 @@ GO
 INSERT INTO Books (ISBN, Title, PublicationYear, PublisherID, AuthorID, StatusID, GenreID) VALUES 
 ('978-0451524935', '1984', 1949, 1, 1, 1, 3),
 ('978-0747532743', 'Harry Potter and the Philosophers Stone', 1997, 2, 2, 1, 4),
+('978-4656546546', 'sugoma', 1997, NULL, NULL, NULL, NULL),
 ('978-0141439518', 'Pride and Prejudice', 1813, 3, 3, 1, 1);
 GO
 
@@ -203,4 +204,6 @@ SELECT * FROM Genders
 
 Select * from Employees
 
-select * from AccessCategories
+Select * from Books
+
+select * from Readers
