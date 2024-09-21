@@ -22,29 +22,29 @@ public class Book : BDObject
 
     [Hidden]
     [ForeignKey("PublisherID")]
-    public int PublisherID { get; set; }
+    public int? PublisherID { get; set; }
     [ColumnName("Издательство")]
-    public Publisher Publisher { get; set; }
+    public Publisher? Publisher { get; set; }
 
     [Hidden]
     [ForeignKey("AuthorID")]
-    public int AuthorID { get; set; }
+    public int? AuthorID { get; set; }
 
     [ColumnName("Автор")]
-    public Author Author { get; set; }
+    public Author? Author { get; set; }
 
     [Hidden]
     [ForeignKey("StatusID")]
-    public int StatusID { get; set; }
+    public int? StatusID { get; set; }
 
     [ColumnName("Статус")]
-    public Status Status { get; set; }
+    public Status? Status { get; set; }
 
     [Hidden]
     [ForeignKey("GenreID")]
-    public int GenreID { get; set; }
+    public int? GenreID { get; set; }
     [ColumnName("Жанр")]
-    public Genre Genre { get; set; }
+    public Genre? Genre { get; set; }
 
     override public string ToString()
     {

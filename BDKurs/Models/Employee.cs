@@ -50,6 +50,7 @@ public class Employee : BDObject
     [ForeignKey("PositionID")]
     public int PositionID { get; set; }
 
+    [Required]
     [ColumnName("Должность")]
     public Position Position { get; set; }
 
@@ -57,6 +58,7 @@ public class Employee : BDObject
     [ForeignKey("AccessCategoryID")]
     public int AccessCategoryID { get; set; }
 
+    [Required]
     [ColumnName("Доступ")]
     public AccessCategory AccessCategory { get; set; }
 

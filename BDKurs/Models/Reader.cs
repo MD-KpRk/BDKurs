@@ -49,10 +49,11 @@ public class Reader : BDObject
     [ColumnName("Пол")]
     public Gender Gender { get; set; }
 
-    [Required]
     [Hidden]
     [ForeignKey("ReaderCategoryID")]
     public int ReaderCategoryID { get; set; }
+
+    [Required]
     [ColumnName("Категория")]
     public ReaderCategory ReaderCategory { get; set; }
 

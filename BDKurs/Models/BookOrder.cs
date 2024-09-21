@@ -23,6 +23,7 @@ public class BookOrder : BDObject
     [ColumnName("Актуальная дата возврата")]
     public DateTime? ActualReturnDate { get; set; }
 
+    [Hidden]
     [ColumnName("Номер книги")]
     [ForeignKey("ISBN")]
     public string BookID { get; set; }

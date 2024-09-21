@@ -1,5 +1,6 @@
 ﻿using BDKurs.ModelControls;
 using BDKurs.Models;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -144,6 +146,14 @@ namespace BDKurs
             Dictionary<Type, Action> @switch = new Dictionary<Type, Action> {
             { typeof(Author), () => CreateAuthor() },
             { typeof(AccessCategory), () => CreateAccessCategory()},
+            { typeof(Book), () => CreateBook()},
+            { typeof(BookOrder), () => CreateBookOrder()},
+            { typeof(Employee), () => CreateEmployee()},
+            { typeof(Genre), () => CreateGenre()},
+            { typeof(Publisher), () => CreatePublisher()},
+            { typeof(Reader), () => CreateReader()},
+            { typeof(ReaderCategory), () => CreateReaderCategory()},
+            { typeof(Status), () => CreateStatus()},
             };
 
             string result = ValidateData();
@@ -156,6 +166,22 @@ namespace BDKurs
             
 
             @switch[ModelType]();
+
+        }
+
+        public void CreateAccessCategory()
+        {
+            AccessCategory category = new AccessCategory();
+
+            category.Name = tblist[0].tb.Text;
+
+            category.AddAcess = (bool)chblist[0].tb.IsChecked;
+            category.EditAcess = (bool)chblist[1].tb.IsChecked;
+            category.DeleteAcess = (bool)chblist[2].tb.IsChecked;
+
+            _context.AccessCategorys.Add(category);
+            _context.SaveChanges();
+            Close();
 
         }
 
@@ -174,20 +200,160 @@ namespace BDKurs
             Close();
         }
 
-        public void CreateAccessCategory()
+        public void CreateBook()
         {
-            AccessCategory category = new AccessCategory();
+            Book book = new Book();
+            book.ISBN = tblist[0].tb.Text;
+            book.Title = tblist[1].tb.Text;
+            if (string.IsNullOrEmpty(tblist[2].tb.Text))
+            {
+                book.PublicationYear = null;
+            }
+            else
+                book.PublicationYear = Convert.ToInt32(tblist[2].tb.Text);
 
-            category.Name = tblist[0].tb.Text;
+            if(cblist[0].tb.SelectedItem != null)
+                book.Publisher = (Publisher)cblist[0].tb.SelectedItem;
+            if(cblist[1].tb.SelectedItem != null)
+                book.Author = (Author)cblist[1].tb.SelectedItem;
+            if(cblist[2].tb.SelectedItem != null)
+                book.Status = (Status)cblist[2].tb.SelectedItem;
+            if(cblist[3].tb.SelectedItem != null)
+                book.Genre = (Genre)cblist[3].tb.SelectedItem;
 
-            category.AddAcess = (bool)chblist[0].tb.IsChecked;
-            category.EditAcess = (bool)chblist[1].tb.IsChecked;
-            category.DeleteAcess = (bool)chblist[2].tb.IsChecked;
-
-            _context.AccessCategorys.Add(category);
+            try
+            {
+                _context.Books.Add(book);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message,"Повторение ISBN запрещено");
+            }
             _context.SaveChanges();
-            Close ();
+            Close();
+        }
+
+        public void CreateBookOrder()
+        {
+            BookOrder bookOrder = new BookOrder();
+
+            bookOrder.BookOrderDate = (DateTime)dplist[0].tb.SelectedDate;
+            bookOrder.ReturnDate = (DateTime)dplist[1].tb.SelectedDate;
+            bookOrder.ActualReturnDate = dplist[2].tb.SelectedDate;
+
+            bookOrder.Book = (Book)cblist[0].tb.SelectedItem;
+            bookOrder.Reader = (Reader)cblist[1].tb.SelectedItem;
+            bookOrder.Employee = (Employee)cblist[2].tb.SelectedItem;
+
+            _context.BookOrders.Add(bookOrder);
+            _context.SaveChanges();
+            Close();
+        }
+
+        public void CreateEmployee()
+        {
+            Employee employee = new Employee();
+
+            employee.FirstName = tblist[0].tb.Text;
+            employee.LastName = tblist[1].tb.Text;
+            employee.MiddleName = tblist[2].tb.Text;
+            employee.Passw = tblist[3].tb.Text;
+            employee.Phone = tblist[4].tb.Text;
+            employee.Email = tblist[5].tb.Text;
+
+            employee.Gender = (Gender)cblist[0].tb.SelectedItem;
+            employee.Position = (Position)cblist[1].tb.SelectedItem;
+            employee.AccessCategory = (AccessCategory)cblist[2].tb.SelectedItem;
+
+            _context.Employees.Add(employee);
+            _context.SaveChanges();
+            Close();
+        }
+
+        public void CreateGenre()
+        {
+            Genre genre = new Genre();
+
+            genre.Name = tblist[0].tb.Text;
+
+            _context.Genres.Add(genre);
+            _context.SaveChanges();
+            Close();
+        }
+
+        public void CreatePosition()
+        {
+            Position pos = new Position();
+
+            pos.Name = tblist[0].tb.Text;
+
+            _context.Positions.Add(pos);
+            _context.SaveChanges();
+            Close();
+        }
+
+        public void CreatePublisher()
+        {
+            Publisher publisher = new Publisher();
+
+            publisher.Name = tblist[0].tb.Text;
+            publisher.Address = tblist[1].tb.Text;
+            publisher.Phone = tblist[2].tb.Text;
+            publisher.Email = tblist[3].tb.Text;
+
+            _context.Publishers.Add(publisher);
+            _context.SaveChanges();
+
+            Close();
+        }
+
+        public void CreateReader()
+        {
+            Reader reader = new Reader();
+
+            reader.FirstName = tblist[0].tb.Text;
+            reader.LastName = tblist[1].tb.Text;
+            reader.MiddleName = tblist[2].tb.Text;
+
+            if(dplist[0].tb.SelectedDate != null)
+                reader.BirthDate = dplist[1].tb.SelectedDate;
+
+            reader.Address = tblist[3].tb.Text;
+            reader.Phone = tblist[4].tb.Text;
+            reader.Email = tblist[5].tb.Text;
+
+            reader.Gender = (Gender)cblist[0].tb.SelectedItem;
+            reader.ReaderCategory = (ReaderCategory)cblist[1].tb.SelectedItem;
+
+            _context.Readers.Add(reader);
+            _context.SaveChanges();
+
+            Close();
 
         }
+
+        public void CreateReaderCategory()
+        {
+            ReaderCategory readerCategory = new ReaderCategory();
+
+            readerCategory.Name = tblist[0].tb.Text;
+
+            _context.ReaderCategorys.Add(readerCategory);
+            _context.SaveChanges();
+
+            Close();
+        }
+        public void CreateStatus()
+        {
+            Status status = new Status();
+
+            status.Name = tblist[0].tb.Text;
+
+            _context.Statuss.Add(status);
+            _context.SaveChanges();
+
+            Close();
+        }
+
     }
 }

@@ -20,6 +20,6 @@ public class ReaderCategory : BDObject
 
     override public string ToString()
     {
-        return "";
+        return Name;
     }
 }
