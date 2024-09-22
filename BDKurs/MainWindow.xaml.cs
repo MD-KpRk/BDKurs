@@ -23,6 +23,8 @@ using TableRow = DocumentFormat.OpenXml.Wordprocessing.TableRow;
 using TableCell = DocumentFormat.OpenXml.Wordprocessing.TableCell;
 using Paragraph = DocumentFormat.OpenXml.Wordprocessing.Paragraph;
 using Run = DocumentFormat.OpenXml.Wordprocessing.Run;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf;
 
 namespace BDKurs
 {
@@ -51,7 +53,7 @@ namespace BDKurs
 
         AccessCategory currentAcess;
 
-        string filePath = "Отчёт.docx";
+        string filePath = "Отчет.docx";
 
         public Tables CurrentChoose {
 
@@ -373,75 +375,185 @@ namespace BDKurs
 
 
 
-        private void MenuItem_Click_2(object sender, RoutedEventArgs e)
+        private void MenuItem_Click_2(object sender, RoutedEventArgs e) // Сформировать
         {
-            string filePath = "Отчет.docx";
-
-            using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(filePath, WordprocessingDocumentType.Document))
+            try
             {
-                MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
-                mainPart.Document = new DocumentFormat.OpenXml.Wordprocessing.Document();
-                Body body = new Body();
+                string filePath = "Отчет.docx";
 
-                // Создание таблицы
-                Table table = new Table();
-
-                // Установка границ для таблицы
-                TableProperties tableProperties = new TableProperties(
-                    new TableBorders(
-                        new TopBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 2 },
-                        new BottomBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 2 },
-                        new LeftBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 2 },
-                        new RightBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 2 },
-                        new InsideHorizontalBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 2 },
-                        new InsideVerticalBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 2 }
-                    )
-                );
-                table.AppendChild(tableProperties);
-
-                // Добавляем строку заголовков из DataGrid
-                TableRow headerRow = new TableRow();
-                foreach (var column in dg1.Columns)
+                using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(filePath, WordprocessingDocumentType.Document))
                 {
-                    TableCell headerCell = new TableCell(new Paragraph(new Run(new Text(column.Header.ToString()))));
-                    headerRow.Append(headerCell);
-                }
-                table.Append(headerRow);
+                    MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
+                    mainPart.Document = new DocumentFormat.OpenXml.Wordprocessing.Document();
+                    Body body = new Body();
 
-                // Заполнение таблицы данными из DataGrid
-                foreach (var item in dg1.Items)
-                {
-                    if (item is not null)
+                    // Создание таблицы
+                    Table table = new Table();
+
+                    // Установка границ для таблицы
+                    TableProperties tableProperties = new TableProperties(
+                        new TableBorders(
+                            new TopBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 2 },
+                            new BottomBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 2 },
+                            new LeftBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 2 },
+                            new RightBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 2 },
+                            new InsideHorizontalBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 2 },
+                            new InsideVerticalBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 2 }
+                        )
+                    );
+                    table.AppendChild(tableProperties);
+
+                    // Добавляем строку заголовков из DataGrid
+                    TableRow headerRow = new TableRow();
+                    foreach (var column in dg1.Columns)
                     {
-                        TableRow dataRow = new TableRow();
+                        TableCell headerCell = new TableCell(new Paragraph(new Run(new Text(column.Header.ToString()))));
+                        headerRow.Append(headerCell);
+                    }
+                    table.Append(headerRow);
 
-                        foreach (var column in dg1.Columns)
+                    // Заполнение таблицы данными из DataGrid
+                    foreach (var item in dg1.Items)
+                    {
+                        if (item is not null)
                         {
-                            var cellValue = column.GetCellContent(item) as TextBlock;
-                            TableCell dataCell = new TableCell(new Paragraph(new Run(new Text(cellValue?.Text ?? string.Empty))));
-                            dataRow.Append(dataCell);
-                        }
+                            TableRow dataRow = new TableRow();
 
-                        table.Append(dataRow);
+                            foreach (var column in dg1.Columns)
+                            {
+                                var cellValue = column.GetCellContent(item) as TextBlock;
+                                TableCell dataCell = new TableCell(new Paragraph(new Run(new Text(cellValue?.Text ?? string.Empty))));
+                                dataRow.Append(dataCell);
+                            }
+
+                            table.Append(dataRow);
+                        }
+                    }
+
+                    body.Append(table);
+                    mainPart.Document.Append(body);
+                    mainPart.Document.Save();
+                }
+
+                MessageBox.Show($"Файл {filePath} успешно создан");
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void MenuItem_Click_3(object sender, RoutedEventArgs e) // Открыть
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
+
+            }
+            catch (Exception Ex)
+            {
+                MessageBox.Show(Ex.Message);
+            }
+        }
+
+        private void MenuItem_Click_4(object sender, RoutedEventArgs e) // Печатать
+        {
+            try
+            {
+                string pdfFilePath = "Отчет.pdf";
+                PrintDocx(pdfFilePath);
+                Process.Start(new ProcessStartInfo(pdfFilePath) { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+
+
+        private void PrintDocx(string pdfFilePath)
+        {
+
+            // Создание PDF с использованием PdfSharp
+            using (PdfDocument document = new PdfDocument())
+            {
+                document.Info.Title = "Отчёт";
+                PdfPage page = document.AddPage();
+                XGraphics gfx = XGraphics.FromPdfPage(page);
+                XFont font = new XFont("Verdana", 10);
+
+                double margin = 10; // Отступ между ячейками
+                double pageWidth = page.Width - 50; // Ширина страницы с учетом отступов
+                double[] columnWidths; // Массив для ширины столбцов
+
+                // Извлечение таблицы из документа Word
+                using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(filePath, false))
+                {
+                    var tables = wordDoc.MainDocumentPart.Document.Body.Elements<Table>();
+                    foreach (var table in tables)
+                    {
+                        // Получаем количество столбцов
+                        int columnCount = table.Elements<TableRow>().First().Elements<TableCell>().Count();
+                        columnWidths = new double[columnCount];
+
+                        // Первый проход для вычисления ширины столбцов и высоты строк
+                        List<double> rowHeights = new List<double>();
+                        foreach (var row in table.Elements<TableRow>())
+                        {
+                            double maxHeight = 0;
+                            int cellIndex = 0;
+                            foreach (var cell in row.Elements<TableCell>())
+                            {
+                                // Извлекаем текст из ячейки
+                                string cellText = cell.InnerText;
+
+                                // Вычисляем ширину текста
+                                double textWidth = gfx.MeasureString(cellText, font).Width;
+
+                                // Сохраняем максимальную ширину для каждого столбца
+                                if (textWidth > columnWidths[cellIndex])
+                                {
+                                    columnWidths[cellIndex] = textWidth;
+                                }
+
+                                // Вычисляем высоту текста и обновляем максимальную высоту
+                                double textHeight = gfx.MeasureString(cellText, font).Height;
+                                if (textHeight > maxHeight)
+                                {
+                                    maxHeight = textHeight;
+                                }
+
+                                cellIndex++;
+                            }
+                            rowHeights.Add(maxHeight + margin); // Добавляем высоту строки
+                        }
+                        double y = 50;
+                        foreach (var row in table.Elements<TableRow>())
+                        {
+                            double x = 50; 
+                            int cellIndex = 0;
+
+                            foreach (var cell in row.Elements<TableCell>())
+                            {
+                                string cellText = cell.InnerText;
+                                double cellWidth = columnWidths[cellIndex] + margin;
+                                gfx.DrawString(cellText, font, XBrushes.Black, new XRect(x, y, cellWidth, rowHeights[cellIndex]), XStringFormats.TopLeft);
+                                x += cellWidth;
+                                cellIndex++;
+                            }
+
+                            y += rowHeights[0]; 
+                            document.AddPage();
+                        }
                     }
                 }
 
-                body.Append(table);
-                mainPart.Document.Append(body);
-                mainPart.Document.Save();
+                document.Save(pdfFilePath);
             }
-
-            MessageBox.Show($"Файл {filePath} успешно создан");
+            MessageBox.Show("Документ pdf создан в указанном вами пути и готов к печати");
         }
 
-        private void MenuItem_Click_3(object sender, RoutedEventArgs e)
-        {
-            Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
-        }
 
-        private void MenuItem_Click_4(object sender, RoutedEventArgs e)
-        {
-
-        }
     }
 }
