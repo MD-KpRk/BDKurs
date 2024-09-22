@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BDKurs"
         mc:Ignorable="d"
-        Title="Library Management" Height="450" Width="800" FontFamily="Yu Gothic UI" WindowStartupLocation="CenterScreen" MinWidth="800" MinHeight="450" Closing="Window_Closing">
+        Title="Library Management" Height="650" Width="1000" FontFamily="Yu Gothic UI" WindowStartupLocation="CenterScreen" MinWidth="800" MinHeight="450" Closing="Window_Closing">
 
     
     <Grid Background="#FFEFEFEF">
@@ -34,10 +34,8 @@
                 <MenuItem Header="Ордера" Click="MenuItem_Click_BookOrders" />
                 <MenuItem Header="Статусы книг" Click="MenuItem_Click_BooksStatuses" />
             </MenuItem>
-            <MenuItem Header="Дополнительно" FontFamily="Yu Gothic UI" FontSize="14">
-                <MenuItem Header="1" FontFamily="Yu Gothic UI" FontSize="14" />
-            </MenuItem>
-            <MenuItem Header="Help" FontFamily="Yu Gothic UI" FontSize="14"/>
+                <MenuItem Header="RawSQL" FontFamily="Yu Gothic UI" FontSize="14" Click="MenuItem_Click_1" />
+                <MenuItem Header="Help" FontFamily="Yu Gothic UI" FontSize="14"/>
             <MenuItem Header="Other" FontFamily="Yu Gothic UI" FontSize="14">
                 <MenuItem Header="Reports" FontFamily="Yu Gothic UI" FontSize="14">
                     <MenuItem Header="Author Report" FontFamily="Yu Gothic UI" FontSize="14"  />

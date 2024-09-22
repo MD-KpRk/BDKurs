@@ -5,11 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BDKurs"
         mc:Ignorable="d"
-        Title="Окно авторизации" Height="550" Width="450" WindowStartupLocation="CenterScreen" MinWidth="450" MinHeight="490" Loaded="Window_Loaded" Closing="Window_Closing" FontFamily="Yu Gothic UI">
+        Title="Окно авторизации" Height="650" Width="550" WindowStartupLocation="CenterScreen" MinWidth="450" MinHeight="490" Loaded="Window_Loaded" Closing="Window_Closing" FontFamily="Yu Gothic UI">
     <Grid Background="#FFEFEFEF">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*" MinWidth="330"/>
+            <ColumnDefinition Width="*" MinWidth="380"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Border BorderThickness="1" Grid.Column="1" Background="White" Height="355" VerticalAlignment="Center" >

@@ -184,7 +184,7 @@ namespace BDKurs
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            _context.Dispose();
+
         }
 
         private void MenuItem_Click_Authors(object sender, RoutedEventArgs e)
@@ -346,6 +346,11 @@ namespace BDKurs
         {
             new AuthWindow().Show();
             Close();
+        }
+
+        private void MenuItem_Click_1(object sender, RoutedEventArgs e)//rawsql
+        {
+
         }
     }
 }

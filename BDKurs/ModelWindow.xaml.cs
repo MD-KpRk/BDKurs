@@ -241,7 +241,16 @@ namespace BDKurs
             bookOrder.Employee = (Employee)cblist[2].tb.SelectedItem;
             if (obj == null)
                 _context.BookOrders.Add(bookOrder);
-            _context.SaveChanges();
+
+            try
+            {
+                _context.SaveChanges();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
             Close();
         }
 
