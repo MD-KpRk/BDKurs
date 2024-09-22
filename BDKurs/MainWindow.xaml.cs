@@ -350,6 +350,13 @@ namespace BDKurs
 
         private void MenuItem_Click_1(object sender, RoutedEventArgs e)//rawsql
         {
+            if (currentAcess.EditAcess == false || currentAcess.AddAcess == false || currentAcess.DeleteAcess == false)
+            {
+                MessageBox.Show("Вашей категории запрещено данное действие");
+                return;
+
+            }
+            new SqlWindow(_context).Show();
 
         }
     }
