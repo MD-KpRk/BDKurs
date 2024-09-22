@@ -25,6 +25,9 @@ using Paragraph = DocumentFormat.OpenXml.Wordprocessing.Paragraph;
 using Run = DocumentFormat.OpenXml.Wordprocessing.Run;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
+using Microsoft.Win32;
+using DocumentFormat.OpenXml.InkML;
+using System.Configuration;
 
 namespace BDKurs
 {
@@ -553,6 +556,95 @@ namespace BDKurs
             }
             MessageBox.Show("Документ pdf создан в указанном вами пути и готов к печати");
         }
+
+
+        private async void MenuItem_Click_7(object sender, RoutedEventArgs e)
+        {
+            await BackupDatabaseAsync(_context);
+        }
+
+        private async void MenuItem_Click_8(object sender, RoutedEventArgs e)
+        {
+            await RestoreDatabaseAsync();
+        }
+
+
+        public async Task BackupDatabaseAsync(DbContext context)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "Backup Files (*.bak)|*.bak",
+                Title = "Сохранить резервную копию базы данных"
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                string backupFilePath = saveFileDialog.FileName;
+
+                string query = $"BACKUP DATABASE [{context.Database.GetDbConnection().Database}] TO DISK = '{backupFilePath}'";
+
+                await context.Database.ExecuteSqlRawAsync(query);
+            }
+        }
+
+        public async Task RestoreDatabaseAsync()
+        {
+            MessageBox.Show("Ожидайте");
+            try
+            {
+                OpenFileDialog openFileDialog = new OpenFileDialog
+                {
+                    Filter = "Backup Files (*.bak)|*.bak",
+                    Title = "Выберите файл резервной копии для восстановления"
+                };
+
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    string backupFilePath = openFileDialog.FileName;
+
+                    // Получаем строку подключения к базе данных master
+                    string masterConnectionString = ConfigurationManager.ConnectionStrings["MasterDbConnection"].ConnectionString;
+
+                    // Получаем строку подключения к базе данных, которую мы восстанавливаем
+                    string libraryDbConnectionString = ConfigurationManager.ConnectionStrings["LibraryDbConnection"].ConnectionString;
+
+                    string dbName = new SqlConnectionStringBuilder(libraryDbConnectionString).InitialCatalog;
+
+                    using (var connection = new SqlConnection(masterConnectionString))
+                    {
+                        await connection.OpenAsync();
+
+                        // Переводим базу данных в однопользовательский режим для завершения всех активных сеансов
+                        string setSingleUserQuery = $"ALTER DATABASE [{dbName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;";
+                        using (var command = new SqlCommand(setSingleUserQuery, connection))
+                        {
+                            await command.ExecuteNonQueryAsync();
+                        }
+
+                        // Выполняем команду восстановления
+                        string restoreQuery = $"RESTORE DATABASE [{dbName}] FROM DISK = '{backupFilePath}' WITH REPLACE;";
+                        using (var command = new SqlCommand(restoreQuery, connection))
+                        {
+                            await command.ExecuteNonQueryAsync();
+                        }
+
+                        // Возвращаем базу данных в многопользовательский режим
+                        string setMultiUserQuery = $"ALTER DATABASE [{dbName}] SET MULTI_USER;";
+                        using (var command = new SqlCommand(setMultiUserQuery, connection))
+                        {
+                            await command.ExecuteNonQueryAsync();
+                        }
+                    }
+                }
+                CurrentChoose = currentchoose;
+                MessageBox.Show("Готово");
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
 
 
     }

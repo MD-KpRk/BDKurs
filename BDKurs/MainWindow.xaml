@@ -41,7 +41,10 @@
                     <MenuItem Header="Печать отчёта" Click="MenuItem_Click_4"/>
 
                 </MenuItem>
-                <MenuItem Header="Other" FontFamily="Yu Gothic UI" FontSize="14">
+                <MenuItem Header="Бэкапы" FontFamily="Yu Gothic UI" FontSize="14">
+                    <MenuItem Header="Создать бэкап" Click="MenuItem_Click_7"/>
+                    <MenuItem Header="Восстановить бд" Click="MenuItem_Click_8"/>
+                    
                 </MenuItem>
                 <MenuItem Header="Выход" FontFamily="Yu Gothic UI" FontSize="14" Click="MenuItem_Click">
                     
