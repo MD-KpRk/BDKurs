@@ -11,6 +11,17 @@ GO
 
 SELECT SYSTEM_USER;
 GO
+
+
+CREATE TABLE Logs (
+    LogID INT PRIMARY KEY IDENTITY(1,1),
+    Timestamp DATETIME DEFAULT GETDATE(),
+    LogLevel VARCHAR(50),
+    Message VARCHAR(255),
+    UserID INT 
+);
+GO
+
 -- Таблица Gender
 CREATE TABLE Genders (
     GenderID INT PRIMARY KEY IDENTITY(1,1),
@@ -228,8 +239,35 @@ GO
 
 
 
-
 -- ТРИГГЕРЫ
+
+
+CREATE TRIGGER trg_LogBookChanges
+ON Books
+AFTER INSERT, UPDATE, DELETE
+AS
+BEGIN
+    DECLARE @LogLevel VARCHAR(50);
+    DECLARE @Message VARCHAR(255);
+    DECLARE @UserID INT = USER_ID(); -- Замените на способ получения ID пользователя
+
+    IF EXISTS(SELECT * FROM inserted)
+    BEGIN
+        SET @LogLevel = 'INFO';
+        SET @Message = 'Книга добавлена или обновлена.';
+    END
+
+    IF EXISTS(SELECT * FROM deleted)
+    BEGIN
+        SET @LogLevel = 'WARNING';
+        SET @Message = 'Книга удалена.';
+    END
+
+    INSERT INTO Logs (LogLevel, Message, UserID)
+    VALUES (@LogLevel, @Message, @UserID);
+END;
+GO
+
 
 CREATE TRIGGER trg_CheckPublicationYear
 ON Books
@@ -330,6 +368,7 @@ BEGIN
     PRINT 'Статус книг обновлён для всех заказов.';
 END;
 GO
+
 
 
 
@@ -571,12 +610,6 @@ VALUES
 ('2024-02-28', '2024-03-28', '2024-03-25', '978-5-17-128855-5', 15, 15)
 GO
 
-
-DISABLE TRIGGER trg_CheckPublicationYear ON Books;
-DISABLE TRIGGER trg_UpdateActualReturnDate ON BookOrders;
-DISABLE TRIGGER trg_DeleteBooksOnPublisherDelete ON Publishers;
-DISABLE TRIGGER trg_CheckBookAvailability ON BookOrders;
-DISABLE TRIGGER trg_UpdateBookStatusOnOrder ON BookOrders;
 
 SELECT * FROM Genders
 
@@ -824,3 +857,24 @@ GO
 -- Показать читателей и количество заказанных книг
 SELECT * FROM vw_ReadersWithBookOrdersCount;
 GO
+
+
+--Логи
+SELECT * FROM Logs ORDER BY Timestamp DESC;
+GO
+
+--BACKUP DATABASE BDKP
+--TO DISK = 'C:\1\BDKP.bak'
+--WITH FORMAT, INIT, SKIP, NOREWIND, NOUNLOAD, STATS = 10;
+
+--RESTORE DATABASE BDKP
+--FROM DISK = 'C:\1\BDKP.bak'
+--WITH REPLACE;
+
+
+DISABLE TRIGGER trg_CheckPublicationYear ON Books;
+DISABLE TRIGGER trg_UpdateActualReturnDate ON BookOrders;
+DISABLE TRIGGER trg_DeleteBooksOnPublisherDelete ON Publishers;
+DISABLE TRIGGER trg_CheckBookAvailability ON BookOrders;
+DISABLE TRIGGER trg_UpdateBookStatusOnOrder ON BookOrders;
+DISABLE TRIGGER trg_LogBookChanges ON Books;
