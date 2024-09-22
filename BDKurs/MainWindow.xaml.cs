@@ -1,4 +1,7 @@
 ﻿using BDKurs.Models;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
+using DocumentFormat.OpenXml;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +17,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Diagnostics;
+using Table = DocumentFormat.OpenXml.Wordprocessing.Table;
+using TableRow = DocumentFormat.OpenXml.Wordprocessing.TableRow;
+using TableCell = DocumentFormat.OpenXml.Wordprocessing.TableCell;
+using Paragraph = DocumentFormat.OpenXml.Wordprocessing.Paragraph;
+using Run = DocumentFormat.OpenXml.Wordprocessing.Run;
 
 namespace BDKurs
 {
@@ -245,7 +254,7 @@ namespace BDKurs
             pressed = true;
             SetGridColor((Grid)sender, 138, 198, 212); // светло синий
         }
-        private void SetGridColor(Grid g, byte R,byte G, byte B) => g.Background = new SolidColorBrush(Color.FromRgb(R, G, B));
+        private void SetGridColor(Grid g, byte R,byte G, byte B) => g.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(R, G, B));
         #endregion
 
         private void ReloadButton_MouseUp(object sender, MouseButtonEventArgs e)
@@ -358,6 +367,70 @@ namespace BDKurs
             }
             new SqlWindow(_context).Show();
 
+        }
+
+
+
+        private void MenuItem_Click_2(object sender, RoutedEventArgs e)
+        {
+            string filePath = "Отчет.docx";
+
+            using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(filePath, WordprocessingDocumentType.Document))
+            {
+                MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
+                mainPart.Document = new Document();
+                Body body = new Body();
+
+                // Создание таблицы
+                Table table = new Table();
+
+                // Установка границ для таблицы
+                TableProperties tableProperties = new TableProperties(
+                    new TableBorders(
+                        new TopBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 12 },
+                        new BottomBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 12 },
+                        new LeftBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 12 },
+                        new RightBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 12 },
+                        new InsideHorizontalBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 12 },
+                        new InsideVerticalBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 12 }
+                    )
+                );
+                table.AppendChild(tableProperties);
+
+                // Добавляем строку заголовков из DataGrid
+                TableRow headerRow = new TableRow();
+                foreach (var column in dg1.Columns)
+                {
+                    TableCell headerCell = new TableCell(new Paragraph(new Run(new Text(column.Header.ToString()))));
+                    headerRow.Append(headerCell);
+                }
+                table.Append(headerRow);
+
+                // Заполнение таблицы данными из DataGrid
+                foreach (var item in dg1.Items)
+                {
+                    if (item is not null)
+                    {
+                        TableRow dataRow = new TableRow();
+
+                        foreach (var column in dg1.Columns)
+                        {
+                            var cellValue = column.GetCellContent(item) as TextBlock;
+                            TableCell dataCell = new TableCell(new Paragraph(new Run(new Text(cellValue?.Text ?? string.Empty))));
+                            dataRow.Append(dataCell);
+                        }
+
+                        table.Append(dataRow);
+                    }
+                }
+
+                body.Append(table);
+                mainPart.Document.Append(body);
+                mainPart.Document.Save();
+            }
+
+            Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
+            MessageBox.Show($"Отчет успешно создан: {filePath}");
         }
     }
 }

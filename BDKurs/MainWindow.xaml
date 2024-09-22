@@ -35,7 +35,7 @@
                 <MenuItem Header="Статусы книг" Click="MenuItem_Click_BooksStatuses" />
             </MenuItem>
                 <MenuItem Header="RawSQL" FontFamily="Yu Gothic UI" FontSize="14" Click="MenuItem_Click_1" />
-                <MenuItem Header="Help" FontFamily="Yu Gothic UI" FontSize="14"/>
+                <MenuItem Header="Сформировать отчёт" FontFamily="Yu Gothic UI" FontSize="14" Click="MenuItem_Click_2"/>
             <MenuItem Header="Other" FontFamily="Yu Gothic UI" FontSize="14">
                 <MenuItem Header="Reports" FontFamily="Yu Gothic UI" FontSize="14">
                     <MenuItem Header="Author Report" FontFamily="Yu Gothic UI" FontSize="14"  />
@@ -51,6 +51,7 @@
                 </MenuItem>
             </Menu>
 
+            
             <TextBlock x:Name="lbb1" Grid.Column="1" Text="Категория"  FontFamily="Yu Gothic UI" FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 2 10 0"/>
         </Grid>
                 <Grid Background="White" MinHeight="400" Grid.Row="1">
