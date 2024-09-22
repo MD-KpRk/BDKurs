@@ -51,6 +51,8 @@ namespace BDKurs
 
         AccessCategory currentAcess;
 
+        string filePath = "Отчёт.docx";
+
         public Tables CurrentChoose {
 
             get
@@ -378,7 +380,7 @@ namespace BDKurs
             using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(filePath, WordprocessingDocumentType.Document))
             {
                 MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
-                mainPart.Document = new Document();
+                mainPart.Document = new DocumentFormat.OpenXml.Wordprocessing.Document();
                 Body body = new Body();
 
                 // Создание таблицы
@@ -387,12 +389,12 @@ namespace BDKurs
                 // Установка границ для таблицы
                 TableProperties tableProperties = new TableProperties(
                     new TableBorders(
-                        new TopBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 12 },
-                        new BottomBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 12 },
-                        new LeftBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 12 },
-                        new RightBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 12 },
-                        new InsideHorizontalBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 12 },
-                        new InsideVerticalBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 12 }
+                        new TopBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 2 },
+                        new BottomBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 2 },
+                        new LeftBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 2 },
+                        new RightBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 2 },
+                        new InsideHorizontalBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 2 },
+                        new InsideVerticalBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 2 }
                     )
                 );
                 table.AppendChild(tableProperties);
@@ -429,8 +431,17 @@ namespace BDKurs
                 mainPart.Document.Save();
             }
 
+            MessageBox.Show($"Файл {filePath} успешно создан");
+        }
+
+        private void MenuItem_Click_3(object sender, RoutedEventArgs e)
+        {
             Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
-            MessageBox.Show($"Отчет успешно создан: {filePath}");
+        }
+
+        private void MenuItem_Click_4(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

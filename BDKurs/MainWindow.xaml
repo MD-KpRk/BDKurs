@@ -35,17 +35,14 @@
                 <MenuItem Header="Статусы книг" Click="MenuItem_Click_BooksStatuses" />
             </MenuItem>
                 <MenuItem Header="RawSQL" FontFamily="Yu Gothic UI" FontSize="14" Click="MenuItem_Click_1" />
-                <MenuItem Header="Сформировать отчёт" FontFamily="Yu Gothic UI" FontSize="14" Click="MenuItem_Click_2"/>
-            <MenuItem Header="Other" FontFamily="Yu Gothic UI" FontSize="14">
-                <MenuItem Header="Reports" FontFamily="Yu Gothic UI" FontSize="14">
-                    <MenuItem Header="Author Report" FontFamily="Yu Gothic UI" FontSize="14"  />
-                    <MenuItem Header="Book Report" FontFamily="Yu Gothic UI" FontSize="14"  />
-                    <MenuItem Header="Publisher Report" FontFamily="Yu Gothic UI" FontSize="14" />
-                    <MenuItem Header="Reader Report" FontFamily="Yu Gothic UI" FontSize="14" />
-                    <MenuItem Header="Employee Report" FontFamily="Yu Gothic UI" FontSize="14" />
+                <MenuItem Header="Отчёты" FontFamily="Yu Gothic UI" FontSize="14" >
+                    <MenuItem Header="Сформировать отчёт" Click="MenuItem_Click_2"/>
+                    <MenuItem Header="Открыть отчёт" Click="MenuItem_Click_3"/>
+                    <MenuItem Header="Печать отчёта" Click="MenuItem_Click_4"/>
+
                 </MenuItem>
-                <MenuItem Header="Print Orders" FontFamily="Yu Gothic UI" FontSize="14" />
-            </MenuItem>
+                <MenuItem Header="Other" FontFamily="Yu Gothic UI" FontSize="14">
+                </MenuItem>
                 <MenuItem Header="Выход" FontFamily="Yu Gothic UI" FontSize="14" Click="MenuItem_Click">
                     
                 </MenuItem>
